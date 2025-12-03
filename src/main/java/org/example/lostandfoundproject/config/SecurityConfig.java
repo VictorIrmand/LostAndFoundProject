@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -45,12 +46,33 @@ public class SecurityConfig {
                         // GET af lost items er offentligt
                         .requestMatchers(HttpMethod.GET, "/api/lostitem/**").permitAll()
 
+                        // Admin
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
                         // POST/PUT/DELETE kræver login
                         .anyRequest().authenticated()
+
                 )
 
-                // Vi laver vores eget login → ikke formLogin
-                .formLogin(form -> form.disable());
+                // 🟢 Håndtér API-fejl – men IKKE på frontend-views
+                .exceptionHandling(eh -> eh
+                        .authenticationEntryPoint((req, res, ex) -> {
+                            if (req.getRequestURI().startsWith("/api/")) {
+                                res.setStatus(401);
+                                res.setContentType("application/json");
+                                res.getWriter().write("{\"error\":\"unauthorized\"}");
+                            } else {
+                                // Hvis det er frontend-route (/home fx) → send bare index.html
+                                req.getRequestDispatcher("/index.html").forward(req, res);
+                            }
+                        })
+                )
+
+                .authenticationProvider(authenticationProvider())
+
+                .formLogin(form -> form
+                        .loginProcessingUrl("/api/auth/login")    // Postman login
+                        .permitAll());
 
         return http.build();
     }
@@ -65,4 +87,14 @@ public class SecurityConfig {
 
         return builder.build();
     }
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider =
+                new DaoAuthenticationProvider(customUserDetailsService);
+
+        provider.setPasswordEncoder(passwordEncoder);
+        return provider;
+    }
 }
+

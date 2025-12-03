@@ -33,5 +33,5 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Forkert brugernavn eller adgangskode");
         }
 
-    }
+}
 }
