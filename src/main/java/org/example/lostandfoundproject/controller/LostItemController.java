@@ -2,6 +2,7 @@ package org.example.lostandfoundproject.controller;
 
 import org.example.lostandfoundproject.dto.LostItemDTO;
 import org.example.lostandfoundproject.dto.UserDTO;
+import org.example.lostandfoundproject.model.Category;
 import org.example.lostandfoundproject.service.LostItemService;
 import org.example.lostandfoundproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,10 @@ public class LostItemController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @GetMapping("/category")
+    public Category[] categories() {
+        return Category.values();
+    }
 
 
 }

@@ -11,7 +11,7 @@ public record LostItemDTO(
         String name,
         String description,
         boolean isFound,
-        Place placeFound,
+        String placeFound,
         Category category
 ) {
 }

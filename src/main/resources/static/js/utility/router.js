@@ -1,6 +1,7 @@
 const routes = {
     "/": () => import("../pages/login-page.js"),
     "/home": () => import ("../pages/home-page.js"),
+    "/createLostItem": () => import("../pages/createLostItem-page.js")
 
 }
 
@@ -8,6 +9,7 @@ const routes = {
 let currentUnmount = null;
 
 export async function route(path = location.pathname, state = null) {
+    console.log("Routing to:", path);
 
     // findes currentUnmount, så kør den.
     currentUnmount?.();

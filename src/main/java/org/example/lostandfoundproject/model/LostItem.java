@@ -39,13 +39,13 @@ public class LostItem {
     private boolean isFound;
 
     @Column(nullable = false)
-    private Place placeFound;
+    private String placeFound;
 
     @Setter
     @Column(nullable = false)
     private Category category;
 
-    public LostItem(String name, String description, boolean isFound, Place placeFound, Category category) {
+    public LostItem(String name, String description, boolean isFound, String placeFound, Category category) {
         this.name = name;
         this.description = description;
         this.isFound = isFound;
