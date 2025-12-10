@@ -14,6 +14,7 @@ public record LostItemDTO(
         boolean isReturned,
         String placeFound,
         Category category,
-        LocalDateTime dateFound
+        LocalDateTime dateFound,
+        LocalDateTime registeredAt
 ) {
 }

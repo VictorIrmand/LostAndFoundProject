@@ -46,6 +46,10 @@ public class LostItem {
     @Column(nullable = false)
     private LocalDateTime dateFound;
 
+    @Column(nullable = false)
+    @CreationTimestamp
+    private LocalDateTime registeredAt;
+
     @Setter
     @Column(nullable = false)
     private Category category;

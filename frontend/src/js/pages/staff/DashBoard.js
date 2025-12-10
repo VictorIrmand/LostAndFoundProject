@@ -25,12 +25,6 @@ export function mount() {
                     Registrer tabt genstand
                 </button>
 
-                
-
-                <button class="btn-handout bg-gray-200 py-3 rounded">
-                    Udlever genstande
-                </button>
-
             </div>
         </div>
     `;
@@ -43,8 +37,6 @@ export function mount() {
     document.querySelector(".btn-lost")
         .addEventListener("click", async () => await navigate("/staff/lost-items"));
 
-    document.querySelector(".btn-handout")
-        .addEventListener("click", async () => await navigate("/staff/lost-items/handout"));
 
     if (currentUser && currentUser.role === "ADMIN") {
         const manageUsersBtn = document.createElement("button");

@@ -8,9 +8,10 @@ export const routes = {
     "/login": () => import("../pages/staff/LoginPage.js"),
     "/staff/lost-items/new": () => import("../pages/staff/CreateLostItem.js"),
     "/staff/lost-items": () => import("../pages/staff/LostItems.js"),
+    "/staff/lost-items/:id": () => import("../pages/staff/ViewLostItem.js"),
     "/staff": () => import("../pages/staff/DashBoard.js"),
     "/staff/users": () => import("../pages/staff/ManageUsers.js"),
-    "/staff/lost-items/handout": () => import("../pages/staff/HandOutItem.js")
+    "/staff/lost-items/handout/:id": () => import("../pages/staff/HandOutItem.js"),
 };
 
 // currentUnmount bliver returneret i mount og gør at en side fjerner sig selv.
@@ -26,10 +27,16 @@ export async function route(path = location.pathname) {
     let moduleLoader = routes[path];
 
     if (!moduleLoader) {
-        console.error("Route not found:", path);
-        return currentUser
-            ? navigate("/staff")
-            : navigate("/")
+        if (path.startsWith("/staff/lost-items/handout/")) {
+            moduleLoader = routes["/staff/lost-items/handout/:id"];
+        } else if (path.startsWith("/staff/lost-items/")) {
+            moduleLoader = routes["/staff/lost-items/:id"];
+        } else {
+            console.error("Route not found:", path);
+            return currentUser
+                ? navigate("/staff")
+                : navigate("/")
+        }
     }
 
     // er async, da det kan tage tid at indlæse et modul.

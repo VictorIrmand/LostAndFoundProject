@@ -1,6 +1,7 @@
 package org.example.lostandfoundproject.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.example.lostandfoundproject.dto.request.CreateLostItemDTO;
 import org.example.lostandfoundproject.dto.response.LostItemDTO;
 import org.example.lostandfoundproject.dto.response.LostItemSummaryDTO;
@@ -38,19 +39,20 @@ public class LostItemController {
 
 
     @PostMapping
-    public ResponseEntity<?> createLostItem(@RequestBody CreateLostItemDTO dto) {
-        lostItemService.createLostItem(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<LostItemDTO> createLostItem(@RequestBody CreateLostItemDTO dto) {
+        LostItemDTO created = lostItemService.createLostItem(dto);
+        logger.info("Smider dto videre: " + created);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 /*
 update
     @PutMapping("/{id}")
 
-view (id)
+*/
     @GetMapping("/{id}")
-    puvlic ResponseEntity<LostItemDTO> viewLostItem(@PathVariable id) {
-        lostItemService.ge
-    } */
+    public ResponseEntity<LostItemDTO> viewLostItem(@PathVariable int id) {
+        return ResponseEntity.ok().body(lostItemService.getItemByID(id));
+    }
 
     @GetMapping("/category")
     public ResponseEntity<List<Category>> categories() {
@@ -58,6 +60,12 @@ view (id)
         List<Category> list = List.of(Category.values());
 
         return ResponseEntity.ok().body(list);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteItem (@PathVariable int id) {
+        lostItemService.deleteItemById(id);
+        return ResponseEntity.ok().build();
     }
 
 
