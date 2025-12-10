@@ -51,7 +51,7 @@ export function mount() {
 <button 
                 type="submit"
                 id="back"
-                class="w-fit p-2 mt-5  py-2.5 bg-gray-600 hover:bg-gray-700 text-white rounded-md transition font-medium tracking-wide"
+                class="w-fit p-2 mt-5  py-2.5 bg-gray-600 hover:bg-gray-700 bg-opacity-50 text-white rounded-md transition font-medium tracking-wide"
             >
                 Tilbage
             </button>

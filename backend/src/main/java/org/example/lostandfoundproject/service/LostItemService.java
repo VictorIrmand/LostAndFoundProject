@@ -47,38 +47,55 @@ public class LostItemService {
             return saved;
         } catch (DataIntegrityViolationException e) {
             throw new IllegalStateException("Database constrain violation; " + e.getMessage());
-        }
-        catch (DataAccessException e) {
+        } catch (DataAccessException e) {
             throw new IllegalStateException("Database error; " + e.getMessage());
         }
     }
 
-    /* public LostItemDTO getItemByID(int id) {
+    public LostItemDTO getItemByID(int id) {
         try {
             LostItemDTO dto = DTOMapper.toDTO(lostItemRepository.findById(id).orElseThrow(() -> {
                 return new NotFoundException("Failed to find item.");
-            })
+            }));
 
-
+            return dto;
+        } catch (DataAccessException e) {
+            logger.error("Failed to find item by ID: {}", id);
+            throw new DatabaseAccessException("Failed to find item in system.");
         }
-    } */
+    }
 
     public List<LostItemDTO> getAllLostItems() {
-     try {
-         return DTOMapper.toDTOList(lostItemRepository.findAll());
-     } catch (DataAccessException e) {
-         logger.error("DB error when retrieving all lost items", e);
-         throw new DatabaseAccessException("Failed to retrieve all lost items");
-     }
+        try {
+            return DTOMapper.toDTOList(lostItemRepository.findAll());
+        } catch (DataAccessException e) {
+            logger.error("DB error when retrieving all lost items", e);
+            throw new DatabaseAccessException("Failed to retrieve all lost items");
+        }
     }
 
 
-    public List<LostItemSummaryDTO> getAllUnreturned () {
+    public List<LostItemSummaryDTO> getAllUnreturned() {
         try {
             return DTOMapper.toSummaryDTOList(lostItemRepository.findAllByIsReturnedFalse());
         } catch (DataAccessException e) {
             logger.error("DB error when retrieving all lost items", e);
             throw new DatabaseAccessException("Failed to retrieve all unreturned items");
+        }
+    }
+
+    public void deleteItemById(int id) {
+        try {
+            LostItem foundItem = lostItemRepository.findById(id)
+                    .orElseThrow(() -> {
+                        return new NotFoundException("Item with ID: " + id + " was not found.");
+                    });
+
+            lostItemRepository.delete(foundItem);
+            logger.info("Item with ID: {} was succesfully deleted.", id);
+        } catch (DataAccessException e) {
+            logger.error("Failed to delete item with ID: {}", id, e);
+            throw new DatabaseAccessException("Failed to delete item.");
         }
     }
 }

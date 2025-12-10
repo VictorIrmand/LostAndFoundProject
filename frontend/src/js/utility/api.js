@@ -73,3 +73,9 @@ export async function apiPostJson(url, body) {
         body: JSON.stringify(body)
     });
 }
+
+export async function apiDeleteJson(url) {
+    return await apiFetch(url, {
+        method: "DELETE"
+    })
+}

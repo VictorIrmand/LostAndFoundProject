@@ -13,14 +13,16 @@ export async function mount() {
 
         </div>
 
-        <div class="create-page flex flex-col items-center justify-center gap-6 py-10 font-serif font-semibold rounded-md">
+        <div class="create-page flex flex-col items-center gap-3 mt-2 font-serif font-semibold">
 
-            <h1 class="text-lg font-normal opacity-60">Lost & Found – Register genstand</h1>
 
-            <div class="w-fit flex p-3  flex-col justify-center bg-gray-300 rounded-md">
-                <form class="flex flex-col gap-1 justify-center">
+        <h1 class="text-lg font-normal opacity-60">Lost & Found – Register genstand</h1>
 
-                    <div class="flex w-full flex-col gap-1">
+            <div class="w-fit flex p-2 flex-col bg-gray-300 rounded-md">
+                <form class="flex flex-col gap-1">
+
+
+                <div class="flex w-full flex-col gap-1">
                         <label for="name" class="text-sm font-medium font-serif text-gray-800">
                             Navn på genstand (ingen beskrivelser):
                         </label>
@@ -66,20 +68,20 @@ export async function mount() {
                focus:border-gray-900/30 transition"
                         >
                             <option value="">Vælg fundested</option>
-                            <option value="1">Fransk sidelys</option>
-                            <option value="2">Dansk sidelys</option>
-                            <option value="3">Forhallen</option>
-                            <option value="4">Dansk kunst</option>
-                            <option value="5">Fransk kunst 1800–1870</option>
-                            <option value="6">Fransk kunst 1870–1925</option>
-                            <option value="7">Antikken</option>
-                            <option value="8">Bag facaden</option>
-                            <option value="9">Vinterhaven</option>
-                            <option value="10">Larsen stuen</option>
-                            <option value="11">Larsen 1. sal</option>
-                            <option value="12">Larsen 2. sal</option>
-                            <option value="13">Tagterrasse</option>
-                            <option value="14">Picnic</option>
+                            <option value="Fransk sidelys">Fransk sidelys</option>
+                            <option value="Dansk sidelys">Dansk sidelys</option>
+                            <option value="Forhallen">Forhallen</option>
+                            <option value="Dansk kunst">Dansk kunst</option>
+                            <option value="Fransk kunst 1800-1870">Fransk kunst 1800–1870</option>
+                            <option value="Fransk kunst 1870-1925">Fransk kunst 1870–1925</option>
+                            <option value="Antikken">Antikken</option>
+                            <option value="Bag facaden">Bag facaden</option>
+                            <option value="Vinterhaven">Vinterhaven</option>
+                            <option value="Larsen stuen">Larsen stuen</option>
+                            <option value="Larsen 1. sal">Larsen 1. sal</option>
+                            <option value="Larsen 2. sal">Larsen 2. sal</option>
+                            <option value="Tagterrasse">Tagterrasse</option>
+                            <option value="Picnic">Picnic</option>
                         </select>
                     </div>
 
@@ -119,7 +121,7 @@ export async function mount() {
                         <button
                                 id="create-btn"
                                 type="submit"
-                                class="px-6 py-2 mt-4 bg-black text-white rounded-md hover:bg-gray-800 transition"
+                                class="px-6 py-2 mt-2 bg-black text-white rounded-md hover:bg-gray-800 transition"
                         >
                             Opret
                         </button>

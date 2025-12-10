@@ -20,10 +20,10 @@ export async function login(loginRequestDTO) {
             await loadCurrentUser();
             await navigate("/staff")
         } else {
-            showMessage("Wrong username or password.")
+            showMessage("Wrong username or password.", "error")
         }
     } catch (e) {
-        showMessage("Login failed. Try again later.");
+        showMessage("Login failed. Try again later.", "error");
     }
 }
 

@@ -11,9 +11,8 @@ export function Navbar() {
 
         <nav id="staff-nav" class="flex items-center gap-8 text-sm">
           <a class="nav-link hover:underline cursor-pointer" href="/staff">Dashboard</a>
-            <a class="nav-link hover:underline cursor-pointer" href="/staff/lost-items">Se genstande</a>
+            <a class="nav-link hover:underline cursor-pointer" href="/staff/lost-items">Administrer genstande</a>
             <a class="nav-link hover:underline cursor-pointer" href="/staff/lost-items/new">Registrer tabt genstand</a>
-            <a class="nav-link hover:underline cursor-pointer" href="/staff/lost-items/handout">Udlever genstand</a>
           
         </nav>
 
