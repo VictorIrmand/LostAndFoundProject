@@ -53,7 +53,7 @@ public class LostItemService {
         }
     }
 
-    public LostItemDTO getItemByID(int id) {
+    /* public LostItemDTO getItemByID(int id) {
         try {
             LostItemDTO dto = DTOMapper.toDTO(lostItemRepository.findById(id).orElseThrow(() -> {
                 return new NotFoundException("Failed to find item.");
@@ -61,7 +61,7 @@ public class LostItemService {
 
 
         }
-    }
+    } */
 
     public List<LostItemDTO> getAllLostItems() {
      try {

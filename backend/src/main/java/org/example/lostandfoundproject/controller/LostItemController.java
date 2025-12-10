@@ -42,14 +42,15 @@ public class LostItemController {
         lostItemService.createLostItem(dto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
-
+/*
+update
     @PutMapping("/{id}")
 
-
+view (id)
     @GetMapping("/{id}")
     puvlic ResponseEntity<LostItemDTO> viewLostItem(@PathVariable id) {
         lostItemService.ge
-    }
+    } */
 
     @GetMapping("/category")
     public ResponseEntity<List<Category>> categories() {
