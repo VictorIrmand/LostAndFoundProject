@@ -63,7 +63,8 @@ public class DTOMapper {
                 lostItem.getId(),
                 lostItem.getName(),
                 lostItem.getPlaceFound(),
-                lostItem.getCategory()
+                lostItem.getCategory(),
+                lostItem.getDateFound()
         );
     }
 

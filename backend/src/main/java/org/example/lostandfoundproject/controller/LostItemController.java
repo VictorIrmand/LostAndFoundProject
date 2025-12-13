@@ -54,7 +54,7 @@ update
         return ResponseEntity.ok().body(lostItemService.getItemByID(id));
     }
 
-    @GetMapping("/category")
+    @GetMapping("/categories")
     public ResponseEntity<List<Category>> categories() {
 
         List<Category> list = List.of(Category.values());
