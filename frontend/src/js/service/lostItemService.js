@@ -63,7 +63,7 @@ export async function getLostItemById(id) {
 // bruges af alle
 // laver et kategori objekt med både value og displayName.
 export async function loadCategories() {
-    const res = await apiGetJson("/api/lost-items/category")
+    const res = await apiGetJson("/api/lost-items/categories")
 
     if (res.ok) {
         categories = res.data.map(category => {
