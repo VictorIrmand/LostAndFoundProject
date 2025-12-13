@@ -1,5 +1,5 @@
 import {Navbar} from "../components/staff/Navbar.js";
-import {allItems, categories, loadAllItems, loadCategories} from "../../service/lostItemService.js";
+import {allItems, categories, filterItems, loadAllItems, loadCategories} from "../../service/lostItemService.js";
 import formatDate from "../../utility/formatDate.js";
 import {navigate} from "../../utility/router.js";
 
@@ -51,7 +51,6 @@ export async function mount() {
   </div>
 <div class="flex flex-row justify-center items-center gap-5">
   <div class="flex flex-col">
-    <label class="text-sm font-medium mb-1">Søg</label>
     <input
             type="text"
             placeholder="Søg efter navn eller ID..."
@@ -60,7 +59,7 @@ export async function mount() {
     >
   </div>
   <div class="flex flex-col">
-  <label class="text-sm font-medium mb-1 opacity-0">"</label>
+  
   <button class="px-5 py-2 border rounded-md h-[42px]">Søg</button>
   </div>
 </div>
@@ -98,8 +97,6 @@ export async function mount() {
     }
 
     const itemList = document.querySelector("#item-list")
-
-
     const dateInput = document.querySelector("#date-input")
     const isFoundSelect = document.querySelector("#is-found-select")
     const searchInput = document.querySelector("#search-input");
@@ -119,59 +116,32 @@ export async function mount() {
         e.preventDefault();
         loadItemCards()
     })
-    searchInput.addEventListener("change", (e) => {
+    searchInput.addEventListener("input", (e) => {
         e.preventDefault();
         loadItemCards()
     })
 
-    function filterItems() {
-        let items = allItems;
-        const dateInputValue = dateInput.value;
-        const categorySelectValue = categorySelect.value;
-        const isFoundSelectValue = isFoundSelect.value;
-        const searchInputValue = searchInput.value.toLowerCase();
-
-        if (dateInputValue && dateInputValue.trim() !== "") {
-            // mismatch mellem frontend der er ddd --- mmm --- yy og entiten har ISO format som også er timer og minutter.
-            items = items.filter(item => item.dateFound.split("T")[0] === dateInputValue);
-        }
-
-        if (categorySelectValue && categorySelectValue.trim() !== "") {
-            items = items.filter(item => item.category === categorySelectValue)
-        }
-
-        if (isFoundSelectValue && isFoundSelectValue.trim() !== "") {
-            items = items.filter(item => {
-                if (isFoundSelectValue === "false") {
-                    return !item.isFound
-                } else {
-                    return item.isFound;
-                }
-            })
-        }
-
-        if (searchInputValue && searchInputValue.trim() !== "") {
-            items = items.filter(item => {
-                return searchInputValue.includes(item.name.toLowerCase()) || searchInputValue.includes(item.id);
-            })
-        }
-
-
-        console.log(items);
-        return items;
-    }
 
     function loadItemCards() {
 
+        let dateInputValue = dateInput.value;
+        let categorySelectValue = categorySelect.value;
+        let isFoundSelectValue = isFoundSelect.value;
+        let searchInputValue = searchInput.value;
         itemList.innerHTML = ``;
 
         if (allItems.length > 0) {
-            filterItems().forEach(item => {
-                const itemCard = document.createElement("div");
-                itemCard.className =
-                    "border rounded-xl p-4 h-48 flex flex-col justify-between border-gray-300 hover:shadow-md transition cursor-pointer";
+            let filteredItems = filterItems(allItems, dateInputValue, categorySelectValue, isFoundSelectValue, searchInputValue)
 
-                itemCard.innerHTML = `
+
+            if (filteredItems.length > 0) {
+
+                filteredItems.forEach(item => {
+                    const itemCard = document.createElement("div");
+                    itemCard.className =
+                        "border rounded-xl p-4 h-48 flex flex-col justify-between border-gray-300 hover:shadow-md transition cursor-pointer";
+
+                    itemCard.innerHTML = `
 <div class="flex flex-row justify-between">
     <p class="font-medium text-lg">${item.name}</p>
     <p class="font-medium text-lg text-gray-500">${item.id}</p>
@@ -180,12 +150,25 @@ export async function mount() {
     <div>${item.isReturned ? `Udleveret` : `Ikke udleveret`}</div>
     <div class="text-sm text-gray-500">
         Fundet: ${formatDate(item.dateFound)}
-    </div>
-`;
+    </div>  
+`
+                    itemCard.addEventListener("click", async () => await navigate(`/staff/lost-items/${item.id}`))
+                    itemList.appendChild(itemCard)
+                })
+            } else {
+                const itemCard = document.createElement("div");
+                itemCard.className =
+                    "border rounded-xl p-4 h-48 flex flex-col justify-between border-gray-300 hover:shadow-md transition";
 
-                itemCard.addEventListener("click", async () => await navigate(`/staff/lost-items/${item.id}`))
+                itemCard.innerHTML = `
+<div class="flex flex-row justify-between">
+    <p class="font-medium text-lg">Ingen genstande matchede søgeresultatet.</p>
+  
+    </div>
+ 
+`
                 itemList.appendChild(itemCard)
-            })
+            }
         } else {
             const itemCard = document.createElement("div");
             itemCard.className =

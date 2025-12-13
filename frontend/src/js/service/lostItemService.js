@@ -90,3 +90,42 @@ export async function deleteItem(id) {
 
 
 }
+
+
+export function filterItems(list, dateInputValue = "", categorySelectValue = "", isFoundSelectValue = "", searchInputValue = "") {
+    let items = [...list]; // som udgangspunkt så ændrer jeg ikke på originalen, da filter altid reassigner
+    // men hvis man f.esk. bruger push eller splice, så vil spreading altså en shallow copy af originalen være et beskyttelseslag,
+    // således at originalen ikke bliver ændret.
+
+    if (dateInputValue && dateInputValue.trim() !== "") {
+        // mismatch mellem frontend der er ddd --- mmm --- yy og entiten har ISO format som også er timer og minutter.
+        items = items.filter(item => item.dateFound.split("T")[0] === dateInputValue);
+    }
+
+    if (categorySelectValue && categorySelectValue.trim() !== "") {
+        items = items.filter(item => item.category === categorySelectValue)
+    }
+
+    if (isFoundSelectValue && isFoundSelectValue.trim() !== "") {
+        items = items.filter(item => {
+            if (isFoundSelectValue === "false") {
+                return !item.isFound
+            } else {
+                return item.isFound;
+            }
+        })
+    }
+
+    if (searchInputValue && searchInputValue.trim() !== "") {
+        const s = searchInputValue.toLowerCase().trim();
+
+        items = items.filter(item =>
+            item.name.toLowerCase().includes(s) ||
+            item.id === searchInputValue
+        );
+    }
+
+
+    console.log(items);
+    return items;
+}
