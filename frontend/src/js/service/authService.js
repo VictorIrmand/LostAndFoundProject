@@ -1,5 +1,5 @@
 import {navigate} from "../utility/router.js";
-import {showMessage} from "../utility/Message.js";
+import {showMessage} from "../pages/components/staff/Message.js";
 
 const baseUrl = import.meta.env.VITE_BASE_URL;
 export let currentUser = null;

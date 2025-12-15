@@ -78,13 +78,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- ✅ JUnit Jupiter -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 
     <build>
@@ -105,12 +98,6 @@
                 </configuration>
             </plugin>
 
-            <!-- ✅ Needed for JUnit 5 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.2.5</version>
-            </plugin>
 
             <!-- Spring Boot plugin -->
             <plugin>

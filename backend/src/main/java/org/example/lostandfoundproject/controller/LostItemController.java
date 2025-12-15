@@ -3,6 +3,7 @@ package org.example.lostandfoundproject.controller;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.example.lostandfoundproject.dto.request.CreateLostItemDTO;
+import org.example.lostandfoundproject.dto.request.HandOutItemDTO;
 import org.example.lostandfoundproject.dto.response.LostItemDTO;
 import org.example.lostandfoundproject.dto.response.LostItemSummaryDTO;
 import org.example.lostandfoundproject.dto.response.UserDTO;
@@ -25,6 +26,7 @@ import java.util.List;
 public class LostItemController {
     private final LostItemService lostItemService;
     private final static Logger logger = LoggerFactory.getLogger(LostItemController.class);
+
     // kan kun hentes af admin eller staff da den indeholder hemmelig info om items
     @GetMapping
     public ResponseEntity<List<LostItemDTO>> getAllLostItemsForStaff() {
@@ -44,11 +46,12 @@ public class LostItemController {
         logger.info("Smider dto videre: " + created);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
-/*
-update
-    @PutMapping("/{id}")
 
-*/
+    /*
+    update
+        @PutMapping("/{id}")
+
+    */
     @GetMapping("/{id}")
     public ResponseEntity<LostItemDTO> viewLostItem(@PathVariable int id) {
         return ResponseEntity.ok().body(lostItemService.getItemByID(id));
@@ -63,13 +66,17 @@ update
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteItem (@PathVariable int id) {
+    public ResponseEntity<?> deleteItem(@PathVariable int id) {
         lostItemService.deleteItemById(id);
         return ResponseEntity.ok().build();
     }
 
 
-
+    @PutMapping("/handout")
+    public ResponseEntity<?> handOutItem(@RequestBody HandOutItemDTO dto) {
+        lostItemService.handOutItem(dto);
+        return ResponseEntity.ok().build();
+    }
 
 
 }

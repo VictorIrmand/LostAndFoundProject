@@ -2,7 +2,7 @@ import {createLostItem, loadCategories} from "../../service/lostItemService.js";
 import {currentUser} from "../../service/authService.js";
 import {categories} from "../../service/lostItemService.js";
 import {Navbar} from "../components/staff/Navbar.js";
-import {showMessage} from "../../utility/Message.js";
+import {showMessage} from "../components/staff/Message.js";
 
 export async function mount() {
     /* language=HTML */

@@ -1,9 +1,10 @@
-import {deleteItem, getLostItemById} from "../../service/lostItemService.js";
+import {deleteItem, getLostItemById, handoutItem} from "../../service/lostItemService.js";
 import {Navbar} from "../components/staff/Navbar.js";
 import formatDate from "../../utility/formatDate.js";
 import {currentUser} from "../../service/authService.js";
 import {navigate} from "../../utility/router.js";
 import {generateItemLabelPdf} from "./GenerateItemLabelPDF.js";
+import ConfirmationPopUp from "../components/staff/ConfirmationPopUp.js";
 
 export async function mount() {
 
@@ -49,6 +50,10 @@ export async function mount() {
 
 </div>
 
+<div>
+                <p class="text-sm text-gray-500 uppercase tracking-wide">Beskrivelse</p>
+                <p class="text-gray-800 mt-1">${item.isReturned ? "Udleveret" : "Ikke udleveret"}</p>
+            </div>
 
             <!-- Beskrivelse -->
             <div>
@@ -91,17 +96,7 @@ export async function mount() {
                 </div>
                 
                 <div id="buttons" class="flex flex-row gap-3">
-               
-                  <div id="handout-btn" class=" gap-2  justify-center items-center flex flex-row bg-green-800 px-2 py-1  text-white rounded hover:bg-green-900 transition cursor-pointer">
-                             <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5">
-    <path d="M9.75 17.25 4.5 12l1.41-1.41 3.84 3.84 8.34-8.34L19.5 7.5l-9.75 9.75z"/>
-</svg>
-                      <p>Udlever genstand</p>
-                 
-
-                </div>
-                
-                
+              
                  <div id="print-btn" class=" gap-2  justify-center items-center flex flex-row bg-blue-800 px-2 py-1  text-white rounded hover:bg-blue-900 transition cursor-pointer">
                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
     <path d="M17 3H7v4H3v9h4v5h10v-5h4V7h-4V3zM9 5h6v2H9V5zm6 14H9v-3h6v3zm4-5H5V9h14v5z"/>
@@ -112,6 +107,7 @@ export async function mount() {
                 
                 </div>
             </div>
+                    <div id="message-container" class="text-center text-sm mt-4 text-red-700"></div>
         </div>
     `;
 
@@ -119,19 +115,51 @@ export async function mount() {
         history.back();
     });
 
-    // du kan selv lave handler til handout-btn
-    document.querySelector("#handout-btn").addEventListener("click", () => {
-navigate(`/staff/lost-items/handout/${id}`)
-    });
+    async function handleHandoutItem() {
+        const handoutItemDTO = {
+            lostItem: id,
+            handedOutBy: currentUser.id
+        }
+
+        const res = await handoutItem(handoutItemDTO);
+
+        if (res.ok) {
+            console.log("det virker")
+            await mount();
+        }
+    }
+
 
     document.querySelector("#print-btn").addEventListener("click", async () => generateItemLabelPdf(item))
 
-
-    if (currentUser.role === "ADMIN") {
+    if (!item.isReturned) {
         const buttons = document.querySelector("#buttons");
 
         const buttonContainer = document.createElement("div");
         buttonContainer.innerHTML = `
+
+        <div id="handout-btn" class=" gap-2  justify-center items-center flex flex-row bg-green-800 px-2 py-1  text-white rounded hover:bg-green-900 transition cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5">
+                <path d="M9.75 17.25 4.5 12l1.41-1.41 3.84 3.84 8.34-8.34L19.5 7.5l-9.75 9.75z"/>
+            </svg>
+            <p>Udlever genstand</p> `
+        // du kan selv lave handler til handout-btn
+        buttonContainer.addEventListener("click", async () => {
+            ConfirmationPopUp(
+                "Er gyldig billed-ID blevet kontrolleret, og har personen beskrevet genstanden korrekt?",
+                "Udlever genstand",
+                "Gå tilbage",
+                async () => await handleHandoutItem()
+            )
+        });
+        buttons.append(buttonContainer);
+    }
+
+        if (currentUser.role === "ADMIN") {
+            const buttons = document.querySelector("#buttons");
+
+            const buttonContainer = document.createElement("div");
+            buttonContainer.innerHTML = `
             <div id="delete-btn" class=" gap-2  justify-center items-center flex flex-row bg-red-800 px-2 py-1  text-white rounded hover:bg-red-900 transition cursor-pointer">
                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" 
      stroke-width="2" viewBox="0 0 24 24" class="w-5 h-5">
@@ -144,12 +172,17 @@ navigate(`/staff/lost-items/handout/${id}`)
 
                 </div>
         `
-        buttonContainer.addEventListener("click", async () => deleteItem(id));
-        buttons.append(buttonContainer);
+            buttonContainer.addEventListener("click", async () => ConfirmationPopUp(
+                "Er du sikker på at du vil slette denne genstand permanent?",
+                "Slet",
+                "Gå tilbage",
+                async () => await deleteItem(id),
+                "danger"
+            ));
+
+            buttons.append(buttonContainer);
+        }
+
+
+        return () => document.querySelector("#app-main").innerHTML = ``;
     }
-
-
-
-
-       return () => document.querySelector("#app-main").innerHTML = ``;
-}

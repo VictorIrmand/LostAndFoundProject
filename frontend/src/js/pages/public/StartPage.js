@@ -26,7 +26,6 @@ export function mount() {
         </div>
         <button class="px-4 py-2 border rounded-full">Billetter</button>
         <button class="px-4 py-2 border rounded-full">Årskort</button>
-        <button class="px-4 py-2 border rounded-full hover:scale-95 transition" id="loginBtn">Login</button>
     </div>
 </div>
 
@@ -68,6 +67,6 @@ export function mount() {
 
     document.querySelector("#link").addEventListener("click",async () => navigate("/lost-items"));
 
-    document.querySelector("#loginBtn").addEventListener("click",async () => navigate("/login"));
+
 
 }

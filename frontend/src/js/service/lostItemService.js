@@ -1,5 +1,5 @@
-import {apiDeleteJson, apiGetJson, apiPostJson} from "../utility/api.js";
-import {showMessage} from "../utility/message.js";
+import {apiDeleteJson, apiGetJson, apiPostJson, apiPutJson} from "../utility/api.js";
+import {showMessage} from "../pages/components/staff/Message.js";
 import {navigate} from "../utility/router.js";
 import {getDisplayName} from "../utility/getDisplayName.js";
 import {generateItemLabelPdf} from "../pages/staff/GenerateItemLabelPDF.js";
@@ -88,6 +88,24 @@ export async function deleteItem(id) {
         console.log("Sletning af genstand med ID: " + id + " fejlede.")
     }
 
+
+}
+
+
+export async function handoutItem(dto) {
+    const res = await apiPutJson("/api/lost-items/handout", dto);
+
+    if (res.ok) {
+        await loadAllItems();
+        await loadUnreturnedItems();
+
+        showMessage("Genstand med ID: " + dto.lostItem + " er nu udleveret.");
+    }
+    else {
+        console.log("Udlevering af genstand med ID: " + dto.lostItem + " fejlede.")
+    }
+
+    return res;
 
 }
 
