@@ -9,6 +9,8 @@ import org.example.lostandfoundproject.model.User;
 
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 public class DTOMapper {
 
     public static LostItem toEntity(CreateLostItemDTO dto) {
@@ -34,6 +36,14 @@ public class DTOMapper {
                 user.getLastName(),
                 user.getRole()
         );
+    }
+
+    public static List<UserDTO> toUserDTOList(List<User> userList) {
+        return userList.stream()
+                .map(user -> {
+                    return toDTO(user);
+                })
+                .toList();
     }
 
 

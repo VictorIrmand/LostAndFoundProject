@@ -1,8 +1,10 @@
 import {navigate} from "../utility/router.js";
 import {showMessage} from "../pages/components/staff/Message.js";
+import {apiGetJson} from "../utility/api.js";
 
 const baseUrl = import.meta.env.VITE_BASE_URL;
 export let currentUser = null;
+
 
 export async function login(loginRequestDTO) {
     try {
@@ -78,3 +80,4 @@ export async function logout() {
         // gør intet- bruger er allerede logget ud af frontend.  currentUser = null.
     }
 }
+

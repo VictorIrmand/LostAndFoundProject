@@ -58,7 +58,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST).hasAnyRole("ADMIN", "STAFF")
                         // kun admin og staff kan lave post requests.
                         .requestMatchers(HttpMethod.GET, "/api/lost-items").hasAnyRole("ADMIN", "STAFF")
-
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         // only admin
 
                         .anyRequest().authenticated()

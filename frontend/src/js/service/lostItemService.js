@@ -35,16 +35,14 @@ export async function createLostItem(createLostItemDTO) {
 
     const response = await apiPostJson("/api/lost-items",createLostItemDTO);
 
-    if (!response) {
-        console.log("Error when creating lost item.");
-        return;
-    }
-
     if (response.ok) {
         await loadAllItems();
         await loadUnreturnedItems();
         await generateItemLabelPdf(response.data)
         showMessage("Tabt genstand er oprettet korrekt.", "info")
+    } else {
+       console.log("Fejl ved registrering af mistet genstand");
+        return;
     }
 
 }
