@@ -3,6 +3,7 @@ package org.example.lostandfoundproject.service;
 import lombok.AllArgsConstructor;
 import org.example.lostandfoundproject.dto.request.CreateLostItemDTO;
 import org.example.lostandfoundproject.dto.request.HandOutItemDTO;
+import org.example.lostandfoundproject.dto.request.UpdateLostItemDTO;
 import org.example.lostandfoundproject.dto.response.LostItemDTO;
 import org.example.lostandfoundproject.dto.response.LostItemSummaryDTO;
 import org.example.lostandfoundproject.exception.DatabaseAccessException;
@@ -33,6 +34,7 @@ public class LostItemService {
     private final HandoutEventRepository handoutRepo;
 
     private final Logger logger = LoggerFactory.getLogger(LostItemService.class);
+    private final LostItemRepository lostItemRepository;
 
     @Transactional
     public LostItemDTO createLostItem(CreateLostItemDTO createDTO) {
@@ -69,6 +71,30 @@ public class LostItemService {
             throw new DatabaseAccessException("Failed to find item in system.");
         }
     }
+
+    public LostItemDTO updateItemById(int id, UpdateLostItemDTO updateLostItemDTO) {
+
+        try {
+        LostItem foundItem = repo.findById(id)
+                .orElseThrow(() -> new NotFoundException("Item with ID "+ id + " not found"));
+
+        foundItem.setName(updateLostItemDTO.name());
+        foundItem.setDescription(updateLostItemDTO.description());
+        foundItem.setPlaceFound(updateLostItemDTO.placeFound());
+        foundItem.setCategory(updateLostItemDTO.category());
+        foundItem.setDateFound(updateLostItemDTO.dateFound());
+
+        LostItem saved = repo.save(foundItem);
+
+            logger.info("Lost item with ID {} was updated", id);
+
+            return DTOMapper.toDTO(saved);
+
+    }catch (DataAccessException e) {
+            logger.error("Failed to update item with ID {}", id, e);
+            throw new DatabaseAccessException("Failed to update item");
+        }
+        }
 
     public List<LostItemDTO> getAllLostItems() {
         try {

@@ -39,10 +39,12 @@ public class LostItem {
     @Column(nullable = false)
     private boolean isReturned;
 
+    @Setter
     @Column(nullable = false)
     private String placeFound;
 
 
+    @Setter
     @Column(nullable = false)
     private LocalDateTime dateFound;
 

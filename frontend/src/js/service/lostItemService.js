@@ -9,7 +9,6 @@ export let allItems = null;
 export let categories = null;
 
 
-
 // bruges til public
 export async function loadUnreturnedItems() {
 
@@ -33,7 +32,7 @@ export async function loadAllItems() {
 
 export async function createLostItem(createLostItemDTO) {
 
-    const response = await apiPostJson("/api/lost-items",createLostItemDTO);
+    const response = await apiPostJson("/api/lost-items", createLostItemDTO);
 
     if (response.ok) {
         await loadAllItems();
@@ -81,12 +80,21 @@ export async function deleteItem(id) {
         await loadUnreturnedItems();
         await navigate("/staff/lost-items");
         showMessage("Genstand med ID: " + id + " er nu slettet.");
-    }
-    else {
+    } else {
         console.log("Sletning af genstand med ID: " + id + " fejlede.")
     }
+}
 
+export async function updateLostItem(id, updateDTO) {
+    const res = await apiPutJson(`/api/lost-items/${id}`,updateDTO)
 
+    if (res.ok) {
+        await loadAllItems();
+        await loadUnreturnedItems();
+        await generateItemLabelPdf(res.data)
+        await navigate(`/staff/lost-items/${id}`);
+        showMessage("Genstand med id " + id + " er blevet opdateret", "info")
+    }
 }
 
 
@@ -98,8 +106,7 @@ export async function handoutItem(dto) {
         await loadUnreturnedItems();
 
         showMessage("Genstand med ID: " + dto.lostItem + " er nu udleveret.");
-    }
-    else {
+    } else {
         console.log("Udlevering af genstand med ID: " + dto.lostItem + " fejlede.")
     }
 
