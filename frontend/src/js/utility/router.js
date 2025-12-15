@@ -11,6 +11,7 @@ export const routes = {
     "/staff/lost-items/:id": () => import("../pages/staff/ViewLostItem.js"),
     "/staff": () => import("../pages/staff/DashBoard.js"),
     "/staff/users": () => import("../pages/staff/ManageUsers.js"),
+    "/staff/users/new": () => import("../pages/staff/CreateUser.js"),
     "/staff/lost-items/handout/:id": () => import("../pages/staff/HandOutItem.js"),
 };
 

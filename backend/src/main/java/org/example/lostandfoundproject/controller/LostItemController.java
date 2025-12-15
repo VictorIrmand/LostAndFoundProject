@@ -1,5 +1,6 @@
 package org.example.lostandfoundproject.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.example.lostandfoundproject.dto.request.CreateLostItemDTO;
@@ -41,7 +42,7 @@ public class LostItemController {
 
 
     @PostMapping
-    public ResponseEntity<LostItemDTO> createLostItem(@RequestBody CreateLostItemDTO dto) {
+    public ResponseEntity<LostItemDTO> createLostItem(@Valid @RequestBody CreateLostItemDTO dto) {
         LostItemDTO created = lostItemService.createLostItem(dto);
         logger.info("Smider dto videre: " + created);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);

@@ -38,4 +38,11 @@ public class User {
         return passwordHash;
     }
 
+    public void changeRole(Role role) {
+        this.role = role;
+    }
+    public void changePasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
 }
