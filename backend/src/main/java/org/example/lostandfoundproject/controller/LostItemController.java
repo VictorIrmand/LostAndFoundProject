@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.example.lostandfoundproject.dto.request.CreateLostItemDTO;
 import org.example.lostandfoundproject.dto.request.HandOutItemDTO;
+import org.example.lostandfoundproject.dto.request.UpdateLostItemDTO;
 import org.example.lostandfoundproject.dto.response.LostItemDTO;
 import org.example.lostandfoundproject.dto.response.LostItemSummaryDTO;
 import org.example.lostandfoundproject.dto.response.UserDTO;
@@ -47,11 +48,13 @@ public class LostItemController {
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    /*
-    update
-        @PutMapping("/{id}")
 
-    */
+        @PutMapping("/{id}")
+    public ResponseEntity<LostItemDTO> updateLostItem(@PathVariable int id, @RequestBody UpdateLostItemDTO updateLostItemDTO){
+        LostItemDTO updated = lostItemService.updateItemById(id, updateLostItemDTO);
+        return ResponseEntity.ok(updated);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<LostItemDTO> viewLostItem(@PathVariable int id) {
         return ResponseEntity.ok().body(lostItemService.getItemByID(id));

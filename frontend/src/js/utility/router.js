@@ -12,6 +12,7 @@ export const routes = {
     "/staff": () => import("../pages/staff/DashBoard.js"),
     "/staff/users": () => import("../pages/staff/ManageUsers.js"),
     "/staff/lost-items/handout/:id": () => import("../pages/staff/HandOutItem.js"),
+    "/staff/update/lost-items/:id": () => import ("../pages/staff/updateLostItem.js")
 };
 
 // currentUnmount bliver returneret i mount og gør at en side fjerner sig selv.
@@ -29,6 +30,8 @@ export async function route(path = location.pathname) {
     if (!moduleLoader) {
         if (path.startsWith("/staff/lost-items/handout/")) {
             moduleLoader = routes["/staff/lost-items/handout/:id"];
+        } else if (path.startsWith("/staff/update/lost-items")) {
+            moduleLoader = routes["/staff/update/lost-items/:id"]
         } else if (path.startsWith("/staff/lost-items/")) {
             moduleLoader = routes["/staff/lost-items/:id"];
         } else {
@@ -39,10 +42,10 @@ export async function route(path = location.pathname) {
         }
     }
 
-    // er async, da det kan tage tid at indlæse et modul.
+// er async, da det kan tage tid at indlæse et modul.
     const module = await moduleLoader();
 
-    // hvis at et modul har en mount funktion, så gør tag dens returværdi og sæt til unmount.
+// hvis at et modul har en mount funktion, så gør tag dens returværdi og sæt til unmount.
     if (typeof module.mount === "function") {
 
         console.log("Kalder mount() for: ", path);
