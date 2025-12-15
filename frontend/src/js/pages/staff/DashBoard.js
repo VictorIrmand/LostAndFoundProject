@@ -18,7 +18,7 @@ export function mount() {
 </div>
             <div class="flex flex-col gap-4 w-full max-w-sm" id="btn-links">
 <button class="btn-lost bg-gray-200 py-3 rounded">
-                    Se tabte genstande
+                    Administrer tabte genstande
                 </button> 
                 
                 <button class="btn-create bg-gray-200 text-black py-3 rounded">

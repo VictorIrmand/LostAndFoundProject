@@ -52,6 +52,7 @@ public class LostItem {
 
     @Setter
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Category category;
 
     public LostItem(String name, String description, boolean isReturned, String placeFound, Category category, LocalDateTime dateFound) {

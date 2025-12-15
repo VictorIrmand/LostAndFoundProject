@@ -1,5 +1,5 @@
 import {navigate} from "./router.js";
-import {showMessage} from "./Message.js";
+import {showMessage} from "../pages/components/staff/Message.js";
 
 const baseUrl = import.meta.env.VITE_BASE_URL;
 
@@ -70,6 +70,14 @@ export async function apiGetJson(url) {
 export async function apiPostJson(url, body) {
     return await apiFetch(url, {
         method: "POST",
+        body: JSON.stringify(body)
+    });
+}
+
+
+export async function apiPutJson(url, body) {
+    return await apiFetch(url, {
+        method: "PUT",
         body: JSON.stringify(body)
     });
 }
