@@ -1,7 +1,6 @@
 package org.example.lostandfoundproject.dto.request;
 
 import org.example.lostandfoundproject.model.Category;
-import org.example.lostandfoundproject.model.User;
 
 import java.time.LocalDateTime;
 
