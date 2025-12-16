@@ -78,7 +78,7 @@ class DTOMapperTest {
         CreateLostItemDTO dto = new CreateLostItemDTO(
                 1,
                 "Nøglebundt",
-                "Med rød nøglering",
+                "3 nøgler",
                 "VINTERHAVEN",
                 Category.ANDET,
                 fixedDateTime.minusHours(2)
