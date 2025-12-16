@@ -3,6 +3,7 @@ package org.example.lostandfoundproject.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.lostandfoundproject.dto.request.CreateUserDTO;
+import org.example.lostandfoundproject.dto.request.UpdateUserDTO;
 import org.example.lostandfoundproject.dto.response.UserDTO;
 import org.example.lostandfoundproject.service.UserService;
 import org.slf4j.Logger;
@@ -27,6 +28,10 @@ public class UserController {
         return ResponseEntity.ok().body(userService.getAllUsers());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDTO> getUserById(@PathVariable int id) {
+        return ResponseEntity.ok().body(userService.getUserDTOById(id));
+    }
     @PostMapping
     public ResponseEntity<UserDTO> createUser(@Valid @RequestBody CreateUserDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(dto));
@@ -35,6 +40,11 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable int id) {
         userService.deleteUser(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+    @PutMapping
+    public ResponseEntity<?> updateUser(@Valid @RequestBody UpdateUserDTO dto) {
+        userService.updateUser(dto);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
