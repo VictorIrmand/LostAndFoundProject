@@ -12,6 +12,7 @@ export const routes = {
     "/staff": () => import("../pages/staff/DashBoard.js"),
     "/staff/users": () => import("../pages/staff/ManageUsers.js"),
     "/staff/users/new": () => import("../pages/staff/CreateUser.js"),
+    "/staff/users/update/:id": () => import("../pages/staff/UpdateUser.js"),
     "/staff/lost-items/handout/:id": () => import("../pages/staff/HandOutItem.js"),
     "/staff/update/lost-items/:id": () => import ("../pages/staff/updateLostItem.js")
 };
@@ -35,6 +36,8 @@ export async function route(path = location.pathname) {
             moduleLoader = routes["/staff/update/lost-items/:id"]
         } else if (path.startsWith("/staff/lost-items/")) {
             moduleLoader = routes["/staff/lost-items/:id"];
+        } else if (path.startsWith("/staff/users/update/")) {
+            moduleLoader = routes["/staff/users/update/:id"];
         } else {
             console.error("Route not found:", path);
             return currentUser

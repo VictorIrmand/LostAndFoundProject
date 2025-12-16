@@ -113,6 +113,7 @@ export async function mount() {
                 <button 
                     class="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
                     data-id="${user.id}"
+                    id="update-btn"
                 >
                     Opdater
                 </button>
@@ -129,6 +130,7 @@ export async function mount() {
             tr.querySelector("#delete-btn").addEventListener("click", async (e) => {
                ConfirmationPopUp("Er du sikker på at du vil slette denne bruger?", "Slet", "Gå tilbage",() => handleDeleteUser(user.id), "danger")
             })
+            tr.querySelector("#update-btn").addEventListener("click", () => navigate(`/staff/users/update/${user.id}`));
             tbody.appendChild(tr);
         });
     }

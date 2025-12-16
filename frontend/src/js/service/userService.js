@@ -1,5 +1,6 @@
-import {apiDeleteJson, apiGetJson, apiPostJson} from "../utility/api.js";
+import {apiDeleteJson, apiGetJson, apiPostJson, apiPutJson} from "../utility/api.js";
 import {showMessage} from "../pages/components/staff/Message.js";
+import {navigate} from "../utility/router.js";
 
 
 
@@ -13,6 +14,13 @@ export async function loadAllUsers() {
     res.ok ? allUsers = res.data : allUsers = [];
 
     console.log(allUsers);
+}
+
+export async function getUserById (id) {
+    const res = await apiGetJson(`/api/admin/users/${id}`);
+    if (res.ok) {
+        return res.data;
+    }
 }
 
 export async function createUser(dto) {
@@ -39,7 +47,19 @@ export async function deleteUser(id) {
         showMessage("Bruger med ID: " + id + " blev slettet.");
         await loadAllUsers();
     } else {
-        console.log("Fejl ved sletning af bruger. Prøv igen senere.");
+        console.log("Fejl ved sletning af bruger.");
+    }
+}
+
+export async function updateUser(dto) {
+    const res = await apiPutJson("/api/admin/users", dto)
+
+    if (res.ok) {
+        showMessage(`Bruger med ID: ${dto.id} er nu blevet opdateret.`);
+        await loadAllUsers();
+        await navigate("/staff/users");
+    } else {
+        console.log("Fejl ved opdatering af bruger.")
     }
 }
 

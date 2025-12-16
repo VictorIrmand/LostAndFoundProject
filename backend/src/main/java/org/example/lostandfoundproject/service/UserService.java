@@ -2,6 +2,7 @@ package org.example.lostandfoundproject.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.lostandfoundproject.dto.request.CreateUserDTO;
+import org.example.lostandfoundproject.dto.request.UpdateUserDTO;
 import org.example.lostandfoundproject.dto.response.UserDTO;
 import org.example.lostandfoundproject.exception.DatabaseAccessException;
 import org.example.lostandfoundproject.exception.DuplicateResourceException;
@@ -39,6 +40,10 @@ public class UserService {
         } catch (DataAccessException e) {
             throw new DatabaseAccessException("A system error occurred. Please try again later.");
         }
+    }
+
+    public UserDTO getUserDTOById(int id) {
+        return DTOMapper.toDTO(getUserEntityById(id));
     }
 
     public UserDTO getUserByUsername(String username) {
@@ -111,6 +116,31 @@ public class UserService {
                     "Database constraint error while creating user."
             );
         }
+    }
+
+
+    @Transactional
+    public UserDTO updateUser(UpdateUserDTO dto) {
+
+        logger.info(
+                "Updating user id={}, username={}, role={}",
+                dto.id(),
+                dto.username(),
+                dto.role()
+        );
+
+        User user = getUserEntityById(dto.id());
+
+        user.setUsername(dto.username());
+        user.setFirstName(dto.firstName());
+        user.setLastName(dto.lastName());
+        user.changeRole(dto.role());
+
+        if (dto.rawPassword() != null && !dto.rawPassword().isBlank()) {
+            user.changePasswordHash(passwordEncoder.encode(dto.rawPassword()));
+        }
+
+        return DTOMapper.toDTO(user);
     }
 
 }
