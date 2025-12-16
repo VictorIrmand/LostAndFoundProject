@@ -10,7 +10,7 @@ export default function ConfirmationPopUp(message, confirmText, cancelText, onCo
     }[type];
 
     overlay.innerHTML = `
-        <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm text-center flex flex-col">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm text-center flex flex-col items-center justify-center">
             <p class="mb-6 text-lg">${message}</p>
 
             <div class="flex justify-end gap-3">
