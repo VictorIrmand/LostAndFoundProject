@@ -1,4 +1,4 @@
-import {apiGetJson, apiPostJson} from "../utility/api.js";
+import {apiDeleteJson, apiGetJson, apiPostJson} from "../utility/api.js";
 import {showMessage} from "../pages/components/staff/Message.js";
 
 
@@ -29,5 +29,17 @@ export async function createUser(dto) {
     }
 
     return res;
+}
+
+export async function deleteUser(id) {
+
+    const res = await apiDeleteJson(`/api/admin/users/${id}`)
+
+    if (res.ok) {
+        showMessage("Bruger med ID: " + id + " blev slettet.");
+        await loadAllUsers();
+    } else {
+        console.log("Fejl ved sletning af bruger. Prøv igen senere.");
+    }
 }
 

@@ -8,6 +8,14 @@ import ConfirmationPopUp from "../components/staff/ConfirmationPopUp.js";
 
 export async function mount() {
 
+    const actionBtnClass = `
+        flex items-center gap-2
+        h-9 min-w-[100px] px-1
+        justify-center
+        text-sm font-medium
+        rounded transition cursor-pointer
+    `;
+
     document.querySelector("#app-main").innerHTML = `
         <div id="nav-container"></div>
 
@@ -20,10 +28,8 @@ export async function mount() {
 
     document.querySelector("#nav-container").appendChild(Navbar());
 
-    // get id from URL
     const id = location.pathname.split("/").pop();
     const item = await getLostItemById(id);
-
     const container = document.querySelector("#container");
 
     if (!item) {
@@ -31,183 +37,136 @@ export async function mount() {
         return;
     }
 
-    const dateFormatted = formatDate(item.dateFound);
-
     container.innerHTML = `
-        <div class="flex flex-col gap-6">
-        
-            <!-- Top -->
-   <div class="flex justify-between items-center">
+        <div class="flex flex-col gap-3">
 
-    <div class="flex">
-        <h1 class="text-l font-semibold">${item.name}</h1>
-    </div>
-
-<div class="flex items-center gap-2">
-    <p class="text-l text-gray-500 m-0 leading-none">ID:</p>
-    <p class="text-l mb-1 text-gray-800 m-0 leading-none">${item.id}</p>
-</div>
-
-</div>
-
-<div>
-                <p class="text-sm text-gray-500 uppercase tracking-wide">Beskrivelse</p>
-                <p class="text-gray-800 mt-1">${item.isReturned ? "Udleveret" : "Ikke udleveret"}</p>
+            <div class="flex justify-between items-center">
+                <h1 class="text-lg font-semibold">${item.name}</h1>
+                <div class="flex items-center gap-2">
+                    <span class="text-gray-500">ID:</span>
+                    <span class="text-gray-800">${item.id}</span>
+                </div>
             </div>
 
-            <!-- Beskrivelse -->
             <div>
-                <p class="text-sm text-gray-500 uppercase tracking-wide">Beskrivelse</p>
-                <p class="text-gray-800 mt-1">${item.description}</p>
+                <p class="text-sm text-gray-500 uppercase">Status</p>
+                <p>${item.isReturned ? "Udleveret" : "Ikke udleveret"}</p>
             </div>
 
-            <!-- Kategori -->
             <div>
-                <p class="text-sm text-gray-500 uppercase tracking-wide">Kategori</p>
-                <p class="mt-1 text-gray-800">${item.category}</p>
+                <p class="text-sm text-gray-500 uppercase">Beskrivelse</p>
+                <p>${item.description}</p>
             </div>
 
-            <!-- Fundested -->
             <div>
-                <p class="text-sm text-gray-500 uppercase tracking-wide">Lokation fundet:</p>
-                <p class="mt-1 text-gray-800">${item.placeFound}</p>
+                <p class="text-sm text-gray-500 uppercase">Kategori</p>
+                <p>${item.category}</p>
             </div>
 
-            <!-- Dato -->
             <div>
-                <p class="text-sm text-gray-500 uppercase tracking-wide">Dato fundet</p>
-                <p class="mt-1 text-gray-800">${dateFormatted}</p>
+                <p class="text-sm text-gray-500 uppercase">Fundet</p>
+                <p>${item.placeFound}</p>
             </div>
 
-            <!-- Indleveret af -->
             <div>
-                <p class="text-sm text-gray-500 uppercase tracking-wide">Registreret af</p>
-                <p class="mt-1 text-gray-800">${item.user?.username || "Ukendt"}</p>
-                <p class="text-gray-800">${formatDate(item.registeredAt)}</p>
+                <p class="text-sm text-gray-500 uppercase">Dato fundet</p>
+                <p>${formatDate(item.dateFound)}</p>
             </div>
 
-            <!-- Knapper -->
-            <div class="flex justify-between gap-3 mt-4">
-              <div>
+            <div>
+                <p class="text-sm text-gray-500 uppercase">Registreret af</p>
+                <p>${item.user?.username ?? "Ukendt"}</p>
+                <p>${formatDate(item.registeredAt)}</p>
+            </div>
+
+            <div class="flex justify-between mt-4">
                 <button id="back-btn"
-                        class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 transition">
+                        class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">
                     Tilbage
                 </button>
-                </div>
-                
-                <div id="buttons" class="flex flex-row gap-3">
-              
-                 <div id="print-btn" class=" gap-2  justify-center items-center flex flex-row bg-blue-800 px-2 py-1  text-white rounded hover:bg-blue-900 transition cursor-pointer">
-                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
-    <path d="M17 3H7v4H3v9h4v5h10v-5h4V7h-4V3zM9 5h6v2H9V5zm6 14H9v-3h6v3zm4-5H5V9h14v5z"/>
-</svg>
-                      <p>Label print</p>
-                      
-                </div>
-                
+
+                <div id="buttons" class="flex gap-3">
+                    <div id="print-btn"
+                         class="${actionBtnClass} bg-blue-800 text-white hover:bg-blue-900">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                            <path d="M17 3H7v4H3v9h4v5h10v-5h4V7h-4V3z"/>
+                        </svg>
+                        <span>Label print</span>
+                    </div>
                 </div>
             </div>
-                    <div id="message-container" class="text-center text-sm mt-4 text-red-700"></div>
+
+            <div id="message-container" class="text-center text-sm mt-4"></div>
         </div>
     `;
 
-    document.querySelector("#back-btn").addEventListener("click", () => {
-        history.back();
-    });
+    document.querySelector("#back-btn").addEventListener("click", () => history.back());
+    document.querySelector("#print-btn").addEventListener("click", () => generateItemLabelPdf(item));
 
     async function handleHandoutItem() {
-        const handoutItemDTO = {
+        const dto = {
             lostItem: id,
             handedOutBy: currentUser.id
-        }
-
-        const res = await handoutItem(handoutItemDTO);
-
-        if (res.ok) {
-            console.log("det virker")
-            await mount();
-        }
+        };
+        const res = await handoutItem(dto);
+        if (res.ok) await mount();
     }
 
-
-    document.querySelector("#print-btn").addEventListener("click", async () => generateItemLabelPdf(item))
+    const buttons = document.querySelector("#buttons");
 
     if (!item.isReturned) {
-        const buttons = document.querySelector("#buttons");
-
-        const buttonContainer = document.createElement("div");
-        buttonContainer.innerHTML = `
-
-        <div id="handout-btn" class=" gap-2  justify-center items-center flex flex-row bg-green-800 px-2 py-1  text-white rounded hover:bg-green-900 transition cursor-pointer">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5">
-                <path d="M9.75 17.25 4.5 12l1.41-1.41 3.84 3.84 8.34-8.34L19.5 7.5l-9.75 9.75z"/>
+        const handoutBtn = document.createElement("div");
+        handoutBtn.className = `${actionBtnClass} bg-green-800 text-white hover:bg-green-900`;
+        handoutBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                <path d="M9.75 17.25 4.5 12l1.41-1.41 3.84 3.84 8.34-8.34L19.5 7.5z"/>
             </svg>
-            <p>Udlever genstand</p> `
-        // du kan selv lave handler til handout-btn
-        buttonContainer.addEventListener("click", async () => {
+            <span>Udlever</span>
+        `;
+        handoutBtn.addEventListener("click", () =>
             ConfirmationPopUp(
-                "Er gyldig billed-ID blevet kontrolleret, og har personen beskrevet genstanden korrekt?",
-                "Udlever genstand",
-                "Gå tilbage",
-                async () => await handleHandoutItem()
+                "Er gyldig billed-ID kontrolleret?",
+                "Udlever",
+                "Annuller",
+                handleHandoutItem
             )
-        });
-        buttons.append(buttonContainer);
-    }
+        );
+        buttons.append(handoutBtn);
 
-    if (!item.isReturned) {
-        const buttons = document.querySelector("#buttons");
-
-        const updateButton = document.createElement("div");
-        updateButton.innerHTML = `
-        <div class="gap-2 justify-center items-center flex flex-row
-                    bg-yellow-700 px-2 py-1 text-white rounded
-                    hover:bg-yellow-800 transition cursor-pointer">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                 viewBox="0 0 24 24" class="w-5 h-5">
+        const updateBtn = document.createElement("div");
+        updateBtn.className = `${actionBtnClass} bg-yellow-700 text-white hover:bg-yellow-800`;
+        updateBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
                 <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/>
-                <path d="M20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
             </svg>
-            <p>Opdater</p>
-        </div>
-    `;
-
-        updateButton.addEventListener("click", () => {
-            navigate(`/staff/update/lost-items/${item.id}`);
-        });
-
-        buttons.append(updateButton);
+            <span>Opdater</span>
+        `;
+        updateBtn.addEventListener("click", () =>
+            navigate(`/staff/update/lost-items/${item.id}`)
+        );
+        buttons.append(updateBtn);
     }
-
 
     if (currentUser.role === "ADMIN") {
-            const buttons = document.querySelector("#buttons");
-
-            const buttonContainer = document.createElement("div");
-            buttonContainer.innerHTML = `
-            <div id="delete-btn" class=" gap-2  justify-center items-center flex flex-row bg-red-800 px-2 py-1  text-white rounded hover:bg-red-900 transition cursor-pointer">
-                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" 
-     stroke-width="2" viewBox="0 0 24 24" class="w-5 h-5">
-  <path stroke-linecap="round" stroke-linejoin="round" 
-        d="M3 6h18M10 11v6M14 11v6M5 6l1 14h12l1-14M8 6V4h8v2"/>
-</svg>
-
-                      <p>Slet genstand</p>
-                 
-
-                </div>
-        `
-            buttonContainer.addEventListener("click", async () => ConfirmationPopUp(
-                "Er du sikker på at du vil slette denne genstand permanent?",
+        const deleteBtn = document.createElement("div");
+        deleteBtn.className = `${actionBtnClass} bg-red-800 text-white hover:bg-red-900`;
+        deleteBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                <path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/>
+            </svg>
+            <span>Slet</span>
+        `;
+        deleteBtn.addEventListener("click", () =>
+            ConfirmationPopUp(
+                "Slet genstanden permanent?",
                 "Slet",
-                "Gå tilbage",
-                async () => await deleteItem(id),
+                "Annuller",
+                () => deleteItem(id),
                 "danger"
-            ));
-
-            buttons.append(buttonContainer);
-        }
-
-
-        return () => document.querySelector("#app-main").innerHTML = ``;
+            )
+        );
+        buttons.append(deleteBtn);
     }
+
+    return () => document.querySelector("#app-main").innerHTML = "";
+}

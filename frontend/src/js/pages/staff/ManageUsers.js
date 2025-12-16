@@ -1,8 +1,9 @@
 import {Navbar} from "../components/staff/Navbar.js";
-import {allUsers} from "../../service/userService.js";
+import {allUsers, deleteUser} from "../../service/userService.js";
 import {loadAllUsers} from "../../service/userService.js";
 import {getDisplayName} from "../../utility/getDisplayName.js";
 import {navigate} from "../../utility/router.js";
+import ConfirmationPopUp from "../components/staff/ConfirmationPopUp.js";
 
 export async function mount() {
     document.querySelector("#app-main").innerHTML = `
@@ -73,6 +74,8 @@ export async function mount() {
 
 </div>
 
+<div id="message-container" class="text-center text-sm mt-4"></div>
+
 </div>
   
     `
@@ -116,16 +119,24 @@ export async function mount() {
                 <button 
                     class="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
                     data-id="${user.id}"
+                    id="delete-btn"
                 >
                     Slet
                 </button>
             </td>
         `;
 
+            tr.querySelector("#delete-btn").addEventListener("click", async (e) => {
+               ConfirmationPopUp("Er du sikker på at du vil slette denne bruger?", "Slet", "Gå tilbage",() => handleDeleteUser(user.id), "danger")
+            })
             tbody.appendChild(tr);
         });
     }
 
+    async function handleDeleteUser(id) {
+        await deleteUser(id);
+        renderUsers();
+    }
 
 
     function filterUsers() {
