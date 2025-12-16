@@ -34,7 +34,7 @@ export async function mount () {
         </div>
         <button class="px-4 py-2 border rounded-full">Billetter</button>
         <button class="px-4 py-2 border rounded-full">Årskort</button>
-        <button class="px-4 py-2 border rounded-full hover:scale-95 transition" id="loginBtn">Login</button>
+       
     </div>
 </div>
 
@@ -104,7 +104,7 @@ export async function mount () {
  `
 
 
-    document.querySelector("#loginBtn").addEventListener("click",async () => navigate("/login"));
+
 
 document.querySelector("#public-nav").addEventListener("click", () => navigate("/"));
 
