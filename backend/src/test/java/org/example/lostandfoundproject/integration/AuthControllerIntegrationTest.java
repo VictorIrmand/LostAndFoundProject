@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -81,7 +82,8 @@ public class AuthControllerIntegrationTest {
                 .andExpect(content().string("Succesfuld logget ind"))
                 .andReturn();
 
-        assertNotNull(result.getResponse().getCookie("JSESSIONID"), "JSESSIONID cookie skal sættes.");
+        assertNotNull(result.getRequest().getSession(false),
+                "Session skal være oprettet efter login.");
     }
 
     @Test
@@ -111,15 +113,8 @@ public class AuthControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        // henter session cookien
-        String sessionId = loginResult.getResponse().getCookie("JSESSIONID").getValue();
-
-        // opret et cookie-objekt for .cookie() metoden
-        Cookie sessionCookie = new Cookie("JSESSIONID", sessionId);
-
-        //  /me anmodning med den gyldige session-cookie
         mockMvc.perform(get(API_URL + "/me")
-                        .cookie(sessionCookie))
+                        .session((MockHttpSession) loginResult.getRequest().getSession()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.username").value(TEST_USERNAME))

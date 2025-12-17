@@ -16,6 +16,7 @@ import org.example.lostandfoundproject.repository.HandoutEventRepository;
 import org.example.lostandfoundproject.repository.LostItemRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.NestedExceptionUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,7 @@ public class LostItemService {
     private final HandoutEventRepository handoutRepo;
 
     private final Logger logger = LoggerFactory.getLogger(LostItemService.class);
-    private final LostItemRepository lostItemRepository;
+
 
     @Transactional
     public LostItemDTO createLostItem(CreateLostItemDTO createDTO) {
@@ -55,7 +56,7 @@ public class LostItemService {
         } catch (DataIntegrityViolationException e) {
             throw new IllegalStateException("Database constrain violation; " + e.getMessage());
         } catch (DataAccessException e) {
-            throw new IllegalStateException("Database error; " + e.getMessage());
+            throw new DatabaseAccessException("Database error; " + e.getMessage());
         }
     }
 
@@ -75,26 +76,26 @@ public class LostItemService {
     public LostItemDTO updateItemById(int id, UpdateLostItemDTO updateLostItemDTO) {
 
         try {
-        LostItem foundItem = repo.findById(id)
-                .orElseThrow(() -> new NotFoundException("Item with ID "+ id + " not found"));
+            LostItem foundItem = repo.findById(id)
+                    .orElseThrow(() -> new NotFoundException("Item with ID " + id + " not found"));
 
-        foundItem.setName(updateLostItemDTO.name());
-        foundItem.setDescription(updateLostItemDTO.description());
-        foundItem.setPlaceFound(updateLostItemDTO.placeFound());
-        foundItem.setCategory(updateLostItemDTO.category());
-        foundItem.setDateFound(updateLostItemDTO.dateFound());
+            foundItem.setName(updateLostItemDTO.name());
+            foundItem.setDescription(updateLostItemDTO.description());
+            foundItem.setPlaceFound(updateLostItemDTO.placeFound());
+            foundItem.setCategory(updateLostItemDTO.category());
+            foundItem.setDateFound(updateLostItemDTO.dateFound());
 
-        LostItem saved = repo.save(foundItem);
+            LostItem saved = repo.save(foundItem);
 
             logger.info("Lost item with ID {} was updated", id);
 
             return DTOMapper.toDTO(saved);
 
-    }catch (DataAccessException e) {
+        } catch (DataAccessException e) {
             logger.error("Failed to update item with ID {}", id, e);
             throw new DatabaseAccessException("Failed to update item");
         }
-        }
+    }
 
     public List<LostItemDTO> getAllLostItems() {
         try {
@@ -112,15 +113,17 @@ public class LostItemService {
             User handedOutBy = userService.getUserEntityById(dto.handedOutBy());
 
             LostItem lostItem = repo.findById(dto.lostItem()).orElseThrow(() -> new NotFoundException("Failed to find item by ID: " + dto.lostItem()));
+
+            if (!lostItem.isReturned()) {
+                throw new IllegalStateException("Item already handed out");
+            }
             lostItem.setReturned(true);
             HandoutEvent handoutEvent = new HandoutEvent(lostItem, handedOutBy);
 
 
             LostItem saved = repo.save(lostItem);
 
-            if (!saved.isReturned()) {
-                throw new IllegalStateException("Item already handed out");
-            }
+
             logger.info("Item with ID: {} is now handed out.", dto.lostItem());
 
             handoutRepo.save(handoutEvent);
@@ -152,11 +155,24 @@ public class LostItemService {
                         return new NotFoundException("Item with ID: " + id + " was not found.");
                     });
 
+            if (foundItem.isReturned()) {
+                HandoutEvent handoutEvent = handoutRepo.findByLostItemId(foundItem.getId())
+                        .orElseThrow(() -> new NotFoundException("Failed to find handout event for item with ID: " + foundItem.getId()));
+                handoutRepo.delete(handoutEvent);
+            }
+
+
             repo.delete(foundItem);
             logger.info("Item with ID: {} was succesfully deleted.", id);
         } catch (DataAccessException e) {
-            logger.error("Failed to delete item with ID: {}", id, e);
-            throw new DatabaseAccessException("Failed to delete item.");
+            logger.error(
+                    "Failed to delete LostItem id={} - rootCause={}",
+                    id,
+                    e.getMostSpecificCause(),
+                    e
+            );
+            throw new DatabaseAccessException("Failed to delete item", e);
         }
     }
+
 }

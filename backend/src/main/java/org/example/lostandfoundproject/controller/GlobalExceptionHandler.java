@@ -24,8 +24,6 @@ public class GlobalExceptionHandler {
     // 400 BAD REQUEST
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<String> handleValidation(MethodArgumentNotValidException e) {
-        logger.warn("Validation failed: {}", e.getMessage());
-
         List<String> errors = new ArrayList<>();
         e.getBindingResult().getFieldErrors().forEach(error ->
                 errors.add(error.getDefaultMessage())
@@ -39,7 +37,6 @@ public class GlobalExceptionHandler {
     // 500 INTERNAL SERVER ERROR
     @ExceptionHandler(DatabaseAccessException.class)
     public ResponseEntity<String> handleDatabaseAccessException(DatabaseAccessException e) {
-        logger.error("Database error: {}", e.getMessage(), e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Der opstod en fejl på serveren. Prøv igen senere.");
     }
@@ -47,14 +44,12 @@ public class GlobalExceptionHandler {
     //  409 CONFLICT
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<String> handleDuplicateResource(DuplicateResourceException e) {
-        logger.warn("Duplicate resource: {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
     }
 
     // 404 NOT FOUND
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<String> handleNotFound(NotFoundException e) {
-        logger.warn("Ressourcer blev ikke fundet: {}", e.getMessage(), e);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ressource blev ikke fundet. Prøv igen senere.");
     }
 
