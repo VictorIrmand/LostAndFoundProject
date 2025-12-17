@@ -115,10 +115,18 @@ export async function handoutItem(dto) {
 }
 
 
-export function filterItems(list, dateInputValue = "", categorySelectValue = "", isFoundSelectValue = "", searchInputValue = "") {
+export function filterItems(list, dateInputValue = "", categorySelectValue = "", isReturnedSelectValue = "", searchInputValue = "") {
     let items = [...list]; // som udgangspunkt så ændrer jeg ikke på originalen, da filter altid reassigner
     // men hvis man f.esk. bruger push eller splice, så vil spreading altså en shallow copy af originalen være et beskyttelseslag,
     // således at originalen ikke bliver ændret.
+
+
+    items = items.sort((a, b) => {
+        if (a.isReturned !== b.isReturned) {
+            return a.isReturned - b.isReturned;
+        }
+        return new Date(a.dateFound) - new Date(b.dateFound);
+    });
 
     if (dateInputValue && dateInputValue.trim() !== "") {
         // mismatch mellem frontend der er ddd --- mmm --- yy og entiten har ISO format som også er timer og minutter.
@@ -129,14 +137,13 @@ export function filterItems(list, dateInputValue = "", categorySelectValue = "",
         items = items.filter(item => item.category === categorySelectValue)
     }
 
-    if (isFoundSelectValue && isFoundSelectValue.trim() !== "") {
+    if (isReturnedSelectValue && isReturnedSelectValue.trim() !== "") {
         items = items.filter(item => {
-            if (isFoundSelectValue === "false") {
-                return !item.isFound
-            } else {
-                return item.isFound;
+            if (isReturnedSelectValue === "false") {
+                return !item.isReturned;
             }
-        })
+            return item.isReturned;
+        });
     }
 
     if (searchInputValue && searchInputValue.trim() !== "") {

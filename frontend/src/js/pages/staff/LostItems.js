@@ -8,73 +8,91 @@ export async function mount() {
     document.querySelector("#app-main").innerHTML = ` 
  
  <div id="nav-container"></div>
-    <div class="w-full flex items-center justify-center">
-<div class="w-full flex flex-col justify-center items-center mt-4 ">
 
-<!-- Page Title -->
-<h1 class="text-3xl font-bold mb-6">Glemte ting – Lost & Found</h1>
+<div class="w-full flex justify-center">
+  <div class="w-full max-w-5xl flex flex-col items-center mt-4">
 
+    <!-- Page Title -->
+    <h1 class="text-3xl font-bold mb-6">
+      Glemte ting – Lost & Found
+    </h1>
 
+    <!-- Filters -->
+    <div
+      class="w-fit flex flex-col gap-2 mb-8 bg-gray-50 px-6 py-4 rounded-md"
+    >
 
-<div class="flex flex-col items-center gap-6 mb-8 w-3/5 justify-center border-[0.25px] border-gray-300 px-2 py-4 rounded-md">
+      <!-- Row 1 -->
+      <div class="flex gap-5 justify-center">
 
-
-
-  
-<div class="flex flex-row gap-5 justify-center items-center">
-  <div class="flex flex-col">
-    <label class="text-sm font-medium mb-1">Dato fundet</label>
-    <input
+        <div class="flex flex-col">
+          <label class="text-sm font-medium mb-1">Dato fundet</label>
+          <input
             type="date"
-            class="border rounded-md px-3 py-2 w-48"
             id="date-input"
-    >
-  </div>
+            class="border rounded-md px-3 py-2 w-48"
+          >
+        </div>
 
-  <div class="flex flex-col">
-    <label class="text-sm font-medium mb-1">Kategori</label>
-    <select class="border rounded-md px-3 py-2 w-56" id="category-select">
-       <option value="">Alle kategorier</option>
-    </select>
-  </div>
-  
-    <div class="flex flex-col">
-    <label class="text-sm font-medium mb-1">Er fundet?</label>
-    <select class="border rounded-md px-3 py-2 w-30" id="is-found-select">
-    <option value="">Alle genstande</option>
-      <option value="false">Ikke fundet</option>
-      <option value="true">Fundet</option>
-      
-    </select>
-  </div>
-  
-  </div>
-<div class="flex flex-row justify-center items-center gap-5">
-  <div class="flex flex-col">
-    <input
+        <div class="flex flex-col">
+          <label class="text-sm font-medium mb-1">Kategori</label>
+          <select
+            id="category-select"
+            class="border rounded-md px-3 py-2 w-56"
+          >
+            <option value="">Alle kategorier</option>
+          </select>
+        </div>
+
+        <div class="flex flex-col">
+          <label class="text-sm font-medium mb-1">Er udleveret?</label>
+          <select
+            id="is-returned-select"
+            class="border rounded-md px-3 py-2 w-48"
+          >
+            <option value="">Alle genstande</option>
+            <option value="true">Er udleveret</option>
+            <option value="false">Ikke udleveret</option>
+          </select>
+        </div>
+
+      </div>
+
+      <!-- Row 2 -->
+      <div class="flex gap-5 justify-center items-end">
+       
+        <div class="flex flex-col">
+          <label class="text-sm font-medium mb-1">Søg</label>
+          <input
             type="text"
-            placeholder="Søg efter navn eller ID..."
-            class="border rounded-md px-3 py-2 w-64"
             id="search-input"
+            placeholder="Søg efter navn eller ID..."
+            class="border rounded-md px-3 py-2 w-64 h-[42px]"
+          >
+        </div>
+
+        <button
+          class="px-5 py-2 border rounded-md h-[42px] bg-gray-200 hover:bg-gray-300 transition"
+        >
+          Søg
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- Item list -->
+    <div
+      id="item-list"
+      class="grid grid-cols-3 gap-6 w-full mb-10  bg-gray-50 rounded-md p-4"
     >
+    </div>
+
+    <div id="message-container" class="text-center text-sm mt-1"></div>
+
   </div>
-  <div class="flex flex-col">
-  
-  <button class="px-5 py-2 border rounded-md h-[42px]">Søg</button>
-  </div>
-</div>
 </div>
 
-
-<div class="grid grid-cols-3 gap-6 w-3/5 mb-10 border-gray-300 rounded md border-[0.25px] p-4" id="item-list">
- 
-</div>
-
-
-                    <div id="message-container" class="text-center text-sm mt-1"></div>
-
-</div>
-</div>
  `
 
     if (categories === null) {
@@ -98,7 +116,7 @@ export async function mount() {
 
     const itemList = document.querySelector("#item-list")
     const dateInput = document.querySelector("#date-input")
-    const isFoundSelect = document.querySelector("#is-found-select")
+    const isReturnedSelect = document.querySelector("#is-returned-select")
     const searchInput = document.querySelector("#search-input");
 
 
@@ -112,7 +130,7 @@ export async function mount() {
         e.preventDefault();
         loadItemCards()
     })
-    isFoundSelect.addEventListener("change", (e) => {
+    isReturnedSelect.addEventListener("change", (e) => {
         e.preventDefault();
         loadItemCards()
     })
@@ -126,12 +144,12 @@ export async function mount() {
 
         let dateInputValue = dateInput.value;
         let categorySelectValue = categorySelect.value;
-        let isFoundSelectValue = isFoundSelect.value;
+        let isReturnedSelectValue = isReturnedSelect.value;
         let searchInputValue = searchInput.value;
         itemList.innerHTML = ``;
 
         if (allItems.length > 0) {
-            let filteredItems = filterItems(allItems, dateInputValue, categorySelectValue, isFoundSelectValue, searchInputValue)
+            let filteredItems = filterItems(allItems, dateInputValue, categorySelectValue, isReturnedSelectValue, searchInputValue)
 
 
             if (filteredItems.length > 0) {
@@ -139,19 +157,41 @@ export async function mount() {
                 filteredItems.forEach(item => {
                     const itemCard = document.createElement("div");
                     itemCard.className =
-                        "border rounded-xl p-4 h-48 flex flex-col justify-between border-gray-300 hover:shadow-md transition cursor-pointer";
+                        "border rounded-xl p-4 h-48 flex flex-col justify-between border-gray-300 bg-gray-100 hover:shadow-md hover:bg-gray-200 transition cursor-pointer";
 
                     itemCard.innerHTML = `
-<div class="flex flex-row justify-between">
-    <p class="font-medium text-lg">${item.name}</p>
-    <p class="font-medium text-lg text-gray-500">${item.id}</p>
+  <div class="flex justify-between items-start">
+    <div>
+      <p class="font-semibold text-lg">${item.name}</p>
+      <p class="text-sm text-gray-500">ID: ${item.id}</p>
     </div>
-    <div>${item.description.substring(0, 15) + "..."}</div>
-    <div>${item.isReturned ? `Udleveret` : `Ikke udleveret`}</div>
-    <div class="text-sm text-gray-500">
-        Fundet: ${formatDate(item.dateFound)}
-    </div>  
-`
+
+    <span
+      class="text-xs px-2 py-1 rounded-full ${
+                        item.isReturned
+                            ? "bg-green-100 text-green-700"
+                            : "bg-yellow-100 text-yellow-700"
+                    }"
+    >
+      ${item.isReturned ? "Udleveret" : "Ikke udleveret"}
+    </span>
+  </div>
+
+  <p class="text-sm text-gray-700 mt-2">
+    ${item.description.length > 60
+                        ? item.description.substring(0, 60) + "..."
+                        : item.description}
+  </p>
+
+  <div class="text-sm text-gray-500 mt-3 space-y-1">
+    <div>
+      <span class="font-medium">Lokation:</span> ${item.placeFound}
+    </div>
+    <div>
+      <span class="font-medium">Dato fundet:</span> ${formatDate(item.dateFound)}
+    </div>
+  </div>
+`;
                     itemCard.addEventListener("click", async () => await navigate(`/staff/lost-items/${item.id}`))
                     itemList.appendChild(itemCard)
                 })

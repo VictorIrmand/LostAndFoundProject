@@ -114,7 +114,7 @@ public class LostItemService {
 
             LostItem lostItem = repo.findById(dto.lostItem()).orElseThrow(() -> new NotFoundException("Failed to find item by ID: " + dto.lostItem()));
 
-            if (!lostItem.isReturned()) {
+            if (lostItem.isReturned()) {
                 throw new IllegalStateException("Item already handed out");
             }
             lostItem.setReturned(true);

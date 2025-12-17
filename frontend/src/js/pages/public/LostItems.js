@@ -52,7 +52,7 @@ export async function mount () {
 </p>
 
 
-<div class="flex flex-col items-center gap-6 mb-8 w-3/5 justify-center border-[0.25px] border-gray-300 px-2 py-4 rounded-md">
+<div class="flex flex-col items-center gap-6 mb-8 w-3/5 justify-center bg-gray-50 px-2 py-4 rounded-md">
 
 
 
@@ -92,7 +92,7 @@ export async function mount () {
 </div>
 
 
-<div class="grid grid-cols-3 gap-6 w-3/5 mb-10 border-gray-300 rounded md border-[0.25px] p-4" id="item-list">
+<div class="grid grid-cols-3 gap-6 w-3/5 mb-10 bg-gray-50 rounded md p-4" id="item-list">
  
 </div>
 
@@ -167,7 +167,7 @@ document.querySelector("#public-nav").addEventListener("click", () => navigate("
                 filteredItems.forEach(item => {
                     const itemCard = document.createElement("div");
                     itemCard.className =
-                        "border rounded-xl p-4 h-48 flex flex-col justify-between border-gray-300 hover:shadow-md transition cursor-pointer";
+                        "border rounded-xl p-4 h-48 flex flex-col justify-between  bg-gray-100 hover:shadow-md hover:bg-gray-200 transition cursor-pointer";
 
                     // language=HTML
                     itemCard.innerHTML = `

@@ -1,7 +1,6 @@
 package org.example.lostandfoundproject.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.Cookie;
 import org.example.lostandfoundproject.dto.request.LoginRequestDTO;
 import org.example.lostandfoundproject.model.Role;
 import org.example.lostandfoundproject.model.User;
@@ -9,40 +8,36 @@ import org.example.lostandfoundproject.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
+@AutoConfigureMockMvc
 @Transactional
-public class AuthControllerIntegrationTest {
-
-    private MockMvc mockMvc;
-
-    // Manuel initialisering af ObjectMapper
-    private final ObjectMapper objectMapper = new ObjectMapper();
+class AuthControllerIntegrationTest {
 
     @Autowired
-    private WebApplicationContext webApplicationContext;
+    private MockMvc mockMvc;
 
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private final String API_URL = "/api/auth";
     private final String TEST_USERNAME = "teststaff";
@@ -59,57 +54,53 @@ public class AuthControllerIntegrationTest {
                 passwordEncoder.encode(TEST_RAW_PASSWORD)
         );
         userRepository.save(user);
-
-
-        this.mockMvc = MockMvcBuilders
-                .webAppContextSetup(webApplicationContext)
-                .apply(springSecurity())
-                .build();
     }
 
-    // login test 1 sucess og 1 fejl
+    // -------- LOGIN --------
 
     @Test
-    void login_ShouldReturnOk_AndSetSessionCookie_OnSuccess() throws Exception {
-        // Arrange
-        LoginRequestDTO requestDTO = new LoginRequestDTO(TEST_USERNAME, TEST_RAW_PASSWORD);
+    void login_ShouldReturnOk_AndCreateSession_OnSuccess() throws Exception {
+        LoginRequestDTO dto =
+                new LoginRequestDTO(TEST_USERNAME, TEST_RAW_PASSWORD);
 
-        // Act & Assert
-        MvcResult result = mockMvc.perform(post(API_URL + "/login").with(csrf())
+        MvcResult result = mockMvc.perform(post(API_URL + "/login")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDTO)))
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Succesfuld logget ind"))
                 .andReturn();
 
-        assertNotNull(result.getRequest().getSession(false),
-                "Session skal være oprettet efter login.");
+        assertNotNull(
+                result.getRequest().getSession(false),
+                "Session skal være oprettet efter login"
+        );
     }
 
     @Test
     void login_ShouldReturnUnauthorized_OnBadCredentials() throws Exception {
-        // Arrange
-        LoginRequestDTO requestDTO = new LoginRequestDTO(TEST_USERNAME, "wrongpassword");
+        LoginRequestDTO dto =
+                new LoginRequestDTO(TEST_USERNAME, "wrongpassword");
 
-        // Act & Assert
-        mockMvc.perform(post(API_URL + "/login").with(csrf())
+        mockMvc.perform(post(API_URL + "/login")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDTO)))
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isUnauthorized())
                 .andExpect(content().string("Forkert brugernavn eller adgangskode"));
     }
 
-    // /me test 1 succes 1 fejl
+    // -------- /ME --------
 
     @Test
-    void me_ShouldReturnUserDTO_OnAuthenticatedUser() throws Exception {
-        // log ind for at få en gyldig session
-        LoginRequestDTO loginDTO = new LoginRequestDTO(TEST_USERNAME, TEST_RAW_PASSWORD);
-
-
-        MvcResult loginResult = mockMvc.perform(post(API_URL + "/login").with(csrf())
+    void me_ShouldReturnUserDTO_WhenAuthenticated() throws Exception {
+        // login først
+        MvcResult loginResult = mockMvc.perform(post(API_URL + "/login")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(loginDTO)))
+                        .content(objectMapper.writeValueAsString(
+                                new LoginRequestDTO(TEST_USERNAME, TEST_RAW_PASSWORD)
+                        )))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -122,8 +113,7 @@ public class AuthControllerIntegrationTest {
     }
 
     @Test
-    void me_ShouldReturnUnauthorized_OnUnauthenticatedUser() throws Exception {
-        // Act uden session/cookie
+    void me_ShouldReturnUnauthorized_WhenNotAuthenticated() throws Exception {
         mockMvc.perform(get(API_URL + "/me"))
                 .andExpect(status().isUnauthorized());
     }

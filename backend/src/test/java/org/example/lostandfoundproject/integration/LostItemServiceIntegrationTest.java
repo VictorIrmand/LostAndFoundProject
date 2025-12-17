@@ -1,6 +1,6 @@
 package org.example.lostandfoundproject.integration;
 
-import lombok.AllArgsConstructor;
+
 import org.example.lostandfoundproject.dto.request.HandOutItemDTO;
 import org.example.lostandfoundproject.model.*;
 import org.example.lostandfoundproject.repository.HandoutEventRepository;
@@ -9,19 +9,15 @@ import org.example.lostandfoundproject.repository.UserRepository;
 import org.example.lostandfoundproject.service.LostItemService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE) // intet web environment da det er integration med database og service.
-@Transactional // hver test kører i en test-transaction. Rollback efter hver test, test-db resettes.
-public class LostItemServiceIntegrationTest {
+@SpringBootTest
+@Transactional
+class LostItemServiceIntegrationTest {
 
     @Autowired
     private UserRepository userRepository;

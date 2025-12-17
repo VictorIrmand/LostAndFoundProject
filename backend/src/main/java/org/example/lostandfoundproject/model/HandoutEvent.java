@@ -21,7 +21,7 @@ public class HandoutEvent {
     private LostItem lostItem;
 
 
-    @ManyToOne(optional = false)
+    @OneToOne(optional = false)
     @JoinColumn(name = "handed_out_by_id")
     private User handedOutBy;
 
